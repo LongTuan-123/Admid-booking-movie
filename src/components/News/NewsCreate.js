@@ -41,16 +41,16 @@ const NewsCreate = () => {
     <PrivateLayout>
       <Form name="validate_other" {...formItemLayout} onFinish={onFinish}>
         <h2 style={{ fontSize: "2rem", textTransform: "uppercase" }}>
-          Thêm tin tức
+          Add News
         </h2>
         <Form.Item
           {...formItemLayout}
           name="name"
-          label="Tiêu đề tin tức"
+          label="News title"
           rules={[
             {
               required: true,
-              message: "Điền tiêu đề",
+              message: "Input the news title",
             },
           ]}
         >

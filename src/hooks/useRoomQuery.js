@@ -1,6 +1,6 @@
 import { getAxios } from '../Http'
 import { useQuery } from 'react-query'
-import { API_ROOM } from '../config/endpointapi'
+import { API_LIST_ROOM } from '../config/endpointapi'
 
 
 const getRoom = async ({ queryKey }) => {
@@ -8,7 +8,7 @@ const getRoom = async ({ queryKey }) => {
 
   const params = { limit, keyword, page }
 
-  const data = await getAxios(API_ROOM, params)
+  const data = await getAxios(API_LIST_ROOM, params)
 
   return data
 }

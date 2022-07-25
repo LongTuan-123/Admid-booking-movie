@@ -12,11 +12,10 @@ import { BiMovie } from 'react-icons/bi'
 import { BsFillDoorOpenFill } from 'react-icons/bs'
 import { BsFillCalendarWeekFill } from 'react-icons/bs'
 import { BsNewspaper } from 'react-icons/bs'
-import { MdEventSeat } from 'react-icons/md'
-import { FaTicketAlt } from 'react-icons/fa'
+import { GiTicket } from 'react-icons/gi'
 import { FaChair } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
-import { ADVERTISEMENT, LOGIN, MOVIE, NEWS, ROOM, SEAT, SHOWTIME, TICKET, USER } from '../config/path'
+import { Link, useLocation } from 'react-router-dom'
+import { ADVERTISEMENT, HOME, LOGIN, MOVIE, NEWS, ROOM, SEAT, SHOWTIME, TICKET, USER } from '../config/path'
 import Logo from '../asset/Logo-main.png'
 import axios from 'axios'
 import Cookies from 'cookies-js'
@@ -28,6 +27,8 @@ const PrivateLayout = ({ children }) => {
   const { SubMenu } = Menu
   const history = useHistory()
   const [slidebar, setSlidebar] = useState(false)
+  const location = useLocation()
+  console.log(location.pathname.split('/')[1])
   const onCollapsed = () => {
     setSlidebar(!slidebar)
   }
@@ -45,6 +46,62 @@ const PrivateLayout = ({ children }) => {
         console.log(err)
       })
   }
+  const MENU_ITEM = [
+    {
+      href: HOME,
+      pathname: '',
+      icon: <AiOutlineHome />,
+      name: 'Home',
+    },
+    {
+      href: MOVIE,
+      pathname: 'movies',
+      icon: <BiMovie />,
+      name: 'Movies',
+    },
+    {
+      href: ADVERTISEMENT,
+      pathname: 'advertisement',
+      icon: <IoMdStarHalf />,
+      name: 'Advertisements',
+    },
+    {
+      href: USER,
+      pathname: 'user',
+      icon: <UserOutlined />,
+      name: 'Users',
+    },
+    {
+      href: ROOM,
+      pathname: 'room',
+      icon: <BsFillDoorOpenFill />,
+      name: 'Rooms',
+    },
+    {
+      href: SEAT,
+      pathname: 'seat',
+      icon: <FaChair />,
+      name: 'Seats',
+    },
+    {
+      href: NEWS,
+      pathname: 'news',
+      icon: <BsNewspaper />,
+      name: 'News',
+    },
+    {
+      href: SHOWTIME,
+      pathname: 'showtime',
+      icon: <BsFillCalendarWeekFill />,
+      name: 'Showtimes',
+    },
+    {
+      href: TICKET,
+      pathname: 'ticket',
+      icon: <GiTicket />,
+      name: 'Tickets',
+    },
+  ]
 
   return (
     <div className="layout">
@@ -57,34 +114,14 @@ const PrivateLayout = ({ children }) => {
               src={Logo}
             />
           </div>
-          <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
-            <Menu.Item key="1" icon={<AiOutlineHome />}>
-              Home
-            </Menu.Item>
-            <Menu.Item key="2" icon={<BiMovie />}>
-              <Link to={MOVIE}>Movie</Link>{' '}
-            </Menu.Item>
-            <Menu.Item key="3" icon={<IoMdStarHalf />}>
-              <Link to={ADVERTISEMENT}>Advertisement</Link>
-            </Menu.Item>
-            <Menu.Item key="4" icon={<UserOutlined />}>
-              <Link to={USER}>User</Link>
-            </Menu.Item>
-            <Menu.Item key="5" icon={<BsFillDoorOpenFill />}>
-              <Link to={ROOM}>Rooms</Link>
-            </Menu.Item>
-            <Menu.Item key="6" icon={<FaChair />}>
-              <Link to={SEAT}>Seats</Link>
-            </Menu.Item>
-            <Menu.Item key="7" icon={<BsNewspaper />}>
-              <Link to={NEWS}>News</Link>
-            </Menu.Item>
-            <Menu.Item key="8" icon={<BsFillCalendarWeekFill />}>
-              <Link to={SHOWTIME}>Showtime</Link>
-            </Menu.Item>
-            <Menu.Item key="9" icon={<BsFillCalendarWeekFill />}>
-              <Link to={TICKET}>Ticket</Link>
-            </Menu.Item>
+          <Menu defaultSelectedKeys={location.pathname.split('/')[1]} theme="dark" mode="inline">
+            {MENU_ITEM?.map((item) => {
+              return (
+                <Menu.Item className="" key={item.pathname} icon={item.icon}>
+                  <Link to={item.pathname}>{item.name}</Link>
+                </Menu.Item>
+              )
+            })}
           </Menu>
         </Sider>
         <Layout className="site-layout">

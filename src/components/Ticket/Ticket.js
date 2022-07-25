@@ -1,74 +1,95 @@
-import { useEffect, useRef, useState } from 'react'
-import axios from 'axios'
-import { Input, Table } from 'antd'
+import { Col, Row, Table } from 'antd'
 import PrivateLayout from '../../Layout/PrivateLayout'
-import { API_LIST_TICKET } from '../../config/endpointapi'
 import '../../style/Ticket.css'
-import { getToken } from '../../Http'
+import { Link, useHistory, useLocation } from 'react-router-dom'
+import { useQueryClient } from 'react-query'
+import QueryString from 'qs'
+import Search from 'antd/lib/transfer/search'
+import useTicketQuery from '../../hooks/useTicketQuery'
+import { SHOWTIME } from '../../config/path'
+import { useState } from 'react'
 
 const Ticket = () => {
-  const [limit, setLimit] = useState(10)
-  const [total, setTotal] = useState()
-  const [keyword, setKeyword] = useState('')
-  const [page, setPage] = useState(1)
-  const [data, setData] = useState([])
-  const value = useRef()
+  const location = useLocation()
+  const history = useHistory()
+  const queryClient = useQueryClient()
+  const [isOpen, setIsOpen] = useState(false)
+  const [isOpenPopover, setIsPopover] = useState(false)
+  const searchUrl = QueryString.parse(location.search.substr(1))
+  const [idDelete, setIdDelete] = useState(0)
+  const [limit] = useState(searchUrl?.limit || 10)
+  const [keyword] = useState(searchUrl?.keyword || '')
+  const [page] = useState(searchUrl?.page || 1)
 
-  useEffect(() => {
-    const getTicket = async () => {
-      const params = { limit, page, keyword }
-      axios.defaults.headers.common['Authorization'] = `Bearer ${getToken()}`
-      await axios
-        .get(API_LIST_TICKET, { params })
-        .then((res) => {
-          setData(res?.data?.data?.data)
-          setTotal(res?.data?.data?.total)
-          console.log(res)
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    }
-    getTicket()
-  }, [limit, page, keyword])
-
-  const onSearch = () => {
-    setKeyword(value.current.input.value)
-  }
-
+  const { data: ticket, isError, isLoading, isFetching } = useTicketQuery([limit, keyword, page])
+  const data = ticket?.data?.data || []
   const onChangePage = (page, limit) => {
-    setPage(page)
-    setLimit(limit)
+    let params = { page, limit }
+    history.push({
+      pathname: SHOWTIME,
+      search: QueryString.stringify(params),
+    })
+  }
+  const onSearch = (showtime) => {
+    let params = { page, limit, keyword: showtime }
+
+    history.push({
+      pathname: SHOWTIME,
+      search: QueryString.stringify(params),
+    })
+  }
+  const onOpenModal = (id) => {
+    setIdDelete(id)
+    setIsPopover(true)
+    setIsOpen(true)
   }
 
+  const onCloseModal = () => {
+    setIsOpen(false)
+  }
   const columns = [
     { title: 'ID', dataIndex: 'id' },
-    { title: 'Mã người dùng', dataIndex: ['user', 'id'] },
-    { title: 'Mã ghế', dataIndex: ['seat', 'id'] },
-    { title: 'Suất chiếu', dataIndex: ['showtime', 'id'] },
-    { title: 'Gía tiền', dataIndex: 'money' },
+    { title: 'User ID', dataIndex: ['user', 'id'] },
+    { title: 'Seat ID', dataIndex: ['seat', 'id'] },
+    { title: 'Showtime', dataIndex: ['showtime', 'id'] },
+    { title: 'Price', dataIndex: 'money' },
     { title: 'Confirm', dataIndex: 'confirm' },
-    { title: 'Ngày mua', dataIndex: 'created_at' },
+    { title: 'Create at', dataIndex: 'created_at' },
   ]
 
   return (
     <PrivateLayout>
-      <h2 style={{ fontSize: '32px', textTransform: 'uppercase' }}>Danh sách vé bán</h2>
-      <div className="ticket-search">
-        <Input ref={value} placeholder="Tìm bằng mã" />
-        <div className="ticket-search__btn" onClick={onSearch}>
-          Tìm
-        </div>
-      </div>
+      <h2 style={{ fontSize: '32px', textTransform: 'uppercase' }}>Table Tickets</h2>
+      <Row>
+        <Col span={20}>
+          <div className="ticket-search">
+            <Search
+              loading={isFetching}
+              defaultadvertise={keyword}
+              onSearch={onSearch}
+              className="ticket-content-search__input"
+            />
+          </div>
+        </Col>
+      </Row>
+
       <Table
+        dataSource={data}
         columns={columns}
+        scroll={{
+          x: 1100,
+        }}
+        key="showtime"
+        loading={isLoading}
         pagination={{
-          total: total,
           onChange: onChangePage,
+          total: ticket?.total,
+          showQuickJumper: true,
           showSizeChanger: true,
           pageSizeOptions: [5, 10, 20, 30],
+          current: ticket?.current_page,
+          pageSize: ticket?.per_page,
         }}
-        dataSource={data}
       />
     </PrivateLayout>
   )

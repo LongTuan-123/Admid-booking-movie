@@ -42,26 +42,25 @@ const User = () => {
   };
 
   const columns = [
-    { title: "ID", dataIndex: "id" },
-    { title: "Profile", dataIndex: "first_name" },
-    { title: "Name", dataIndex: "last_name" },
+    { title: "ID user", dataIndex: "id" },
+    { title: "Name", dataIndex:  `"first_name" "last_name"` },
     { title: "Age", dataIndex: "age" },
     { title: "Address", dataIndex: "address" },
     { title: "Email", dataIndex: "email" },
     { title: "Person ID", dataIndex: "person_id" },
-    { title: "Ngày tạo", dataIndex: "created_at" },
+    { title: "Create date", dataIndex: "created_at" },
     
   ];
 
   return (
     <PrivateLayout>
       <h2 style={{ fontSize: "32px", textTransform: "uppercase" }}>
-        Danh sách người dùng
+        Table users
       </h2>
       <div className="user-search">
         <Input ref={value} placeholder="Search by First name" />
         <div className="user-search__btn" onClick={onSearch}>
-          Tìm
+          Search
         </div>
       </div>
       <Table

@@ -1,72 +1,66 @@
-import PrivateLayout from "../../Layout/PrivateLayout";
-import { Form, Select, InputNumber, Button, Input, DatePicker } from "antd";
-import axios from "axios";
-import { API_ROOM_SELECT, API_SEAT_CREATE } from "../../config/endpointapi";
-import { useEffect, useState } from "react";
-import Cookies from "cookies-js";
-import { useHistory } from "react-router-dom";
-import { SEAT } from "../../config/path";
-import { getToken } from "../../Http";
+import PrivateLayout from '../../Layout/PrivateLayout'
+import { Form, Select,  Button, Input } from 'antd'
+import { API_SEAT_CREATE } from '../../config/endpointapi'
+import { useState } from 'react'
+import { useHistory, useLocation } from 'react-router-dom'
+import { SEAT } from '../../config/path'
+import QueryString from 'qs'
+import { useQueryClient } from 'react-query'
+import useRoomQuery from '../../hooks/useRoomQuery'
+import moment from 'moment'
+import { postAxios } from '../../Http'
 
-const { Option } = Select;
+const { Option } = Select
 
 const SeatCreate = () => {
-  const [token] = useState(Cookies?.get("token"));
-  const [movieSelect, setMovieSelect] = useState([]);
-  const history = useHistory();
-
-  // const onChange = (e) => {
-  //   console.log(e.target.value);
-  // };
-
   const formItemLayout = {
     labelCol: { span: 6 },
     wrapperCol: { span: 14 },
-  };
+  }
+  const history = useHistory()
+  const queryClient = useQueryClient()
+  const location = useLocation()
+  const id_room = location.pathname.split('/')[4]
+  const searchUrl = QueryString.parse(location.search.substr(1))
+  const [limit] = useState(searchUrl?.limit || 10)
+  const [keyword] = useState(searchUrl?.keyword || '')
+  const [page] = useState(searchUrl?.page || 1)
 
-  useEffect(() => {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${getToken()}`;
-    const getMovieSelect = async () => {
-      await axios
-        .get(API_ROOM_SELECT)
-        .then((res) => {
-          setMovieSelect(res?.data?.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
+  const { data: room } = useRoomQuery([limit, keyword, page])
+  console.log(room?.data?.data)
+  const roomList = room?.data?.data.map((rooms) => {
+    return rooms
+  })
+  const onCreateSeat = (value) => {
+    value.created_at = moment().format('YYYY-MM-DD HH:mm:ss')
 
-    getMovieSelect();
-  }, [token]);
-
-  const onFinish = (values) => {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${getToken()}`;
-    axios
-      .post(API_SEAT_CREATE, values)
-      .then(function (res) {
-        history.push(SEAT);
+    postAxios(API_SEAT_CREATE, value)
+      .then((res) => {
+        if (res.status === 1) {
+          queryClient.invalidateQueries(['room'])
+          setTimeout(() => {
+            history.push(SEAT)
+          }, 1000)
+        }
       })
-      .catch(function (err) {
-        console.log(err);
-      });
-  };
+      .catch((err) => {
+        console.log(err)
+      })
+  }
 
   return (
     <PrivateLayout>
-      <Form name="validate_other" {...formItemLayout} onFinish={onFinish}>
-        <h2 style={{ fontSize: "2rem", textTransform: "uppercase" }}>
-          Thêm ghế
-        </h2>
+      <Form name="validate_other" {...formItemLayout} onFinish={onCreateSeat}>
+        <h2 style={{ fontSize: '2rem', textTransform: 'uppercase' }}>Add seat</h2>
 
         <Form.Item
           {...formItemLayout}
           name="row"
-          label="Hàng"
+          label="Row"
           rules={[
             {
               required: true,
-              message: "Please input your row",
+              message: 'Please input your row',
             },
           ]}
         >
@@ -86,43 +80,43 @@ const SeatCreate = () => {
         <Form.Item
           {...formItemLayout}
           name="num_order"
-          label="Số lượng cột trong hàng"
+          label="Number of seats in row"
           rules={[
             {
               required: true,
-              message: "Nhập số lượng cột trong hàng",
+              message: 'Input the number of seats in row',
             },
           ]}
         >
-          <Input type={"number"} />
+          <Input type={'number'} />
         </Form.Item>
 
         <Form.Item
           {...formItemLayout}
           name="money"
-          label="Số tiền"
+          label="Price of seat"
           rules={[
             {
               required: true,
-              message: "Nhập số tiền",
+              message: 'Input the price',
             },
           ]}
         >
-          <Input type={"number"} />
+          <Input type={'number'} />
         </Form.Item>
         <Form.Item
           name="type_seat"
-          label="Loại ghế"
+          label="Type of seat"
           rules={[
             {
               required: true,
-              message: "Nhập thể loại ghế",
+              message: 'Input the type of seat',
             },
           ]}
         >
           <Select placeholder="Vui lòng chọn loại ghế">
-            <Option value="1">Ghế vip</Option>
-            <Option value="3">Ghế thường</Option>
+            <Option value="1">Vip seat</Option>
+            <Option value="3">Normal seat</Option>
           </Select>
         </Form.Item>
 
@@ -132,25 +126,25 @@ const SeatCreate = () => {
           rules={[
             {
               required: true,
-              message: "Nhập phòng chiếu",
+              message: 'Input the room',
             },
           ]}
         >
-          <Select placeholder="Please select movie">
-            {movieSelect?.map((movie) => {
-              return <Option value={movie?.id}>{movie?.name}</Option>;
+          <Select placeholder="Please select room">
+            {roomList?.map((r) => {
+              return <Option value={r?.id}>{r?.name}</Option>
             })}
           </Select>
         </Form.Item>
 
         <Form.Item wrapperCol={{ span: 12, offset: 6 }}>
           <Button type="primary" htmlType="submit">
-            Xác nhận
+            Create
           </Button>
         </Form.Item>
       </Form>
     </PrivateLayout>
-  );
-};
+  )
+}
 
-export default SeatCreate;
+export default SeatCreate

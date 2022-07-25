@@ -1,56 +1,55 @@
-import { Button, Form, Input } from "antd";
-import axios from "axios";
-import { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { API_ROOM_STORE } from "../../config/endpointapi";
-import { ROOM } from "../../config/path";
-import PrivateLayout from "../../Layout/PrivateLayout";
-import Cookies from "cookies-js";
-import { getToken } from "../../Http";
+import { Button, Form, Input } from 'antd'
+import { useState } from 'react'
+import PrivateLayout from '../../Layout/PrivateLayout'
+import { API_ROOM_STORE } from '../../config/endpointapi'
+import { ROOM } from '../../config/path'
+import { useHistory, useLocation } from 'react-router-dom'
+import { getToken, postAxios } from '../../Http'
+import useRoomCreate from '../../hooks/useRoomCreate'
+import QueryString from 'qs'
+import { useQueryClient } from 'react-query'
+import moment from 'moment'
 
 const RoomCreate = () => {
-  const history = useHistory();
+  const history = useHistory()
+  const queryClient = useQueryClient()
 
-  const onChange = (e) => {
-    console.log(e.target.value);
-  };
   const formItemLayout = {
     labelCol: { span: 6 },
     wrapperCol: { span: 14 },
   };
 
-  const normFile = (e) => {
-    console.log("Upload event:", e);
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e && e.fileList;
-  };
-  const onFinish = (values) => {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${getToken()}`;
-    axios
-      .post(API_ROOM_STORE, values)
-      .then(function (res) {
-        history.push(ROOM);
+  const onCreateRoom = (value) => {
+    value.created_at = moment().format('YYYY-MM-DD HH:mm:ss')
+
+    postAxios(API_ROOM_STORE, value)
+      .then((res) => {
+        if (res.status === 1) {
+          queryClient.invalidateQueries(['room'])
+          // toast.success(res?.message)
+          setTimeout(() => {
+            history.push(ROOM)
+          }, 1000)
+        }
       })
-      .catch(function (err) {
-        console.log(err);
-      });
-  };
+      .catch((err) => {
+        console.log(err)
+      })
+  }
   return (
     <PrivateLayout>
-      <Form name="validate_other" {...formItemLayout} onFinish={onFinish}>
+      <Form name="validate_other" {...formItemLayout} onFinish={onCreateRoom}>
         <h2 style={{ fontSize: "2rem", textTransform: "uppercase" }}>
-          Thêm phòng
+          Add Room
         </h2>
         <Form.Item
           {...formItemLayout}
           name="name"
-          label="Tên phòng"
+          label="Name"
           rules={[
             {
               required: true,
-              message: "Điền tên phòng",
+              message: "Input the name of room",
             },
           ]}
         >
@@ -59,11 +58,11 @@ const RoomCreate = () => {
         <Form.Item
           {...formItemLayout}
           name="number_seat"
-          label="Số lượng ghế"
+          label="Number of seats"
           rules={[
             {
               required: true,
-              message: "Nhập số lượng ghế",
+              message: "Input the number of seats",
             },
           ]}
         >
@@ -72,7 +71,7 @@ const RoomCreate = () => {
 
         <Form.Item wrapperCol={{ span: 12, offset: 6 }}>
           <Button type="primary" htmlType="submit">
-            Xác nhận
+            Create
           </Button>
         </Form.Item>
       </Form>

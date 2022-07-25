@@ -10,7 +10,7 @@ export const API_LIST_USER = `${BASE_API}/api/auth/list`
 export const API_MOVIE_STORE = `${BASE_API}/api/movies/store`
 export const API_MOVIE = `${BASE_API}/api/movies`
 export const API_MOVIE_SELECT = `${BASE_API}/api/movies/select`
-export const API_MOVIE_DELETE = `${BASE_API}/api/movies/delete`
+export const API_MOVIE_DELETE = `${BASE_API}/api/movies/delete/:id`
 export const API_MOVIE_DETAIL = `${BASE_API}/api/movies/:id`
 export const API_MOVIE_UPDATE = `${BASE_API}/api/movies/update`
 

@@ -14,13 +14,14 @@ import {
   PointElement,
   LineElement,
   Legend,
+  Title,
   Tooltip,
 } from 'chart.js'
 import { Chart } from 'react-chartjs-2'
 
 const { RangePicker } = DatePicker
 
-ChartJS.register(LinearScale, CategoryScale, BarElement, PointElement, LineElement, Legend, Tooltip)
+ChartJS.register(LinearScale, CategoryScale, BarElement, PointElement, LineElement, Title, Legend, Tooltip)
 
 const Home = () => {
   const [data, setData] = useState()
@@ -31,12 +32,12 @@ const Home = () => {
   const [dataCol, setDataCol] = useState([])
 
   useEffect(() => {
+    axios.defaults.headers.common['AUTHORIZATION'] = `Bearer ${getToken()}`
     const getTicket = async () => {
       const params = {
         start_date: moment(startDate).format('YYYY-MM-DD'),
         end_date: moment(endDate).format('YYYY-MM-DD'),
       }
-      axios.defaults.headers.common['Authorization'] = `Bearer ${getToken()}`
       await axios
         .get(API_TICKET_DATE, { params })
         .then((res) => {
@@ -81,29 +82,32 @@ const Home = () => {
   return (
     <PrivateLayout>
       <div className="home">
-        <RangePicker defaultValue={[startDate, endDate]} onChange={handleChangeRangeDate} />
-        <Chart
-          ref={chartRef}
-          data={{
-            labels,
-            datasets: [
-              {
-                label: 'Ticket',
-                data: dataCol,
-                borderColor: 'rgb(255, 99, 132)',
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        <div className="ticket-chart">
+          <div className="label">Number of tickets sold </div>
+          <RangePicker defaultValue={[startDate, endDate]} onChange={handleChangeRangeDate} />
+          <Chart
+            ref={chartRef}
+            data={{
+              labels,
+              datasets: [
+                {
+                  label: 'Ticket',
+                  data: dataCol,
+                  borderColor: 'rgb(255, 99, 132)',
+                  backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                },
+              ],
+            }}
+            type="line"
+            options={{
+              scales: {
+                y: {
+                  beginAtZero: true,
+                },
               },
-            ],
-          }}
-          type="line"
-          options={{
-            scales: {
-              y: {
-                beginAtZero: true,
-              },
-            },
-          }}
-        />
+            }}
+          />
+        </div>
       </div>
     </PrivateLayout>
   )

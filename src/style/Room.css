@@ -37,5 +37,20 @@ a{
     width: 400px;
     height: 200px;
     object-fit: contain;
-    
 }
+.room .room-three__dot {
+    cursor: pointer;
+  }
+  
+  .room-popover .room-popover__content {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 10px;
+  }
+  
+  .room-popover .room-popover__content:hover {
+    cursor: pointer;
+    background-color: bisque;
+  }
+  

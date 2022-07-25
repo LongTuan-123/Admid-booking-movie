@@ -1,4 +1,4 @@
-import { Button, Popover, Col, Row, Table } from 'antd'
+import { Popover, Col, Row, Table, notification } from 'antd'
 import { useState } from 'react'
 import { API_ADVERTISEMENT_DELETE } from '../../config/endpointapi'
 import { ADVERTISEMENT, ADVERTISEMENT_CREATE } from '../../config/path'
@@ -6,7 +6,6 @@ import PrivateLayout from '../../Layout/PrivateLayout'
 import '../../style/Advertisement.css'
 import { bindParam } from '../../config/function'
 import { Link, useHistory, useLocation } from 'react-router-dom'
-
 import { useQueryClient } from 'react-query'
 import { postAxios } from '../../Http'
 import QueryString from 'qs'
@@ -15,7 +14,7 @@ import Search from 'antd/lib/transfer/search'
 import useAdvertisementQuery from '../../hooks/useAdvertisementQuery'
 import { BsThreeDots } from 'react-icons/bs'
 import { AiFillDelete } from 'react-icons/ai'
-import { MdUpdate } from 'react-icons/md'
+import { SmileOutlined } from '@ant-design/icons'
 
 const Advertisement = () => {
   const location = useLocation()
@@ -33,19 +32,20 @@ const Advertisement = () => {
   const data = advertise?.data?.data || []
   const onChangePage = (page, limit) => {
     let params = { page, limit }
-
     history.push({
       pathname: ADVERTISEMENT,
       search: QueryString.stringify(params),
     })
   }
-  console.log(advertise)
-  const onDelete = () => {
-    postAxios(bindParam(API_ADVERTISEMENT_DELETE, { id: idDelete }))
+  const onDelete = (id) => {
+    postAxios(bindParam(API_ADVERTISEMENT_DELETE, { id }))
       .then((res) => {
         if (res.status === 1) {
-          // toast.success(res?.message)
           queryClient.invalidateQueries(['advertisement'])
+          notification.open({
+            message: 'Delete Successed',
+            icon: <SmileOutlined style={{ color: '#108ee9' }} />,
+          })
         }
       })
       .catch((err) => {
@@ -77,9 +77,9 @@ const Advertisement = () => {
   //   history.push(bindParams(ADVERTISEMENT_UPDATE, { id }))
   // }
   const columns = [
-    { title: 'ID Quảng cáo', dataIndex: 'id' },
+    { title: 'ID Advertisement', dataIndex: 'id' },
     {
-      title: 'Ảnh',
+      title: 'Image',
       render: (advertise) => {
         return (
           <div className="advertisement-list__img">
@@ -89,7 +89,7 @@ const Advertisement = () => {
       },
     },
     {
-      title: 'Tên quảng cáo',
+      title: 'Name',
       dataIndex: 'name',
     },
 
@@ -103,11 +103,7 @@ const Advertisement = () => {
           <div className="advertise-popover">
             <div className="advertise-popover__content" onClick={() => onOpenModal(id)}>
               <AiFillDelete />
-              <div onClick={onDelete}>Delete</div>
-            </div>
-            <div className="advertise-popover__content" >
-              <MdUpdate />
-              <div>Update</div>
+              <div onClick={() => onDelete(id)}>Delete</div>
             </div>
           </div>
         )
@@ -122,7 +118,7 @@ const Advertisement = () => {
   ]
   return (
     <PrivateLayout>
-      <h2 style={{ fontSize: '32px', textTransform: 'uppercase' }}>Danh sách quảng cáo</h2>
+      <h2 style={{ fontSize: '32px', textTransform: 'uppercase' }}>Table Advertisements</h2>
       <Row>
         <Col span={20}>
           <div className="advertisement-search">
@@ -136,7 +132,7 @@ const Advertisement = () => {
         </Col>
         <Col span={4}>
           <div className="advertisement-add__btn">
-            <Link to={ADVERTISEMENT_CREATE}>Thêm quảng cáo</Link>
+            <Link to={ADVERTISEMENT_CREATE}>Add advertisement</Link>
           </div>
         </Col>
       </Row>

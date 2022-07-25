@@ -1,8 +1,6 @@
 import { Button, Form, Input } from 'antd'
 import { useState } from 'react'
 import PrivateLayout from '../../Layout/PrivateLayout'
-import Cookies from 'cookies-js'
-import axios from 'axios'
 import { API_ADVERTISEMENT_STORE } from '../../config/endpointapi'
 import { ADVERTISEMENT } from '../../config/path'
 import { useHistory, useLocation } from 'react-router-dom'
@@ -15,7 +13,6 @@ import moment from 'moment'
 const AdvertisementCreate = () => {
   const history = useHistory()
   const queryClient = useQueryClient()
-  const location = useLocation()
 
   const formItemLayout = {
     labelCol: { span: 6 },
@@ -51,7 +48,7 @@ const AdvertisementCreate = () => {
           rules={[
             {
               required: true,
-              message: 'Input the name ',
+              message: 'Input the name of advertisement',
             },
           ]}
         >

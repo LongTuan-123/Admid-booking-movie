@@ -4,7 +4,7 @@
 .ant-table-thead > tr > th {
     text-align:center;
 }
-.movie-search{
+.seat-search{
     display: flex;
     justify-content: center;
     width: 60%;
@@ -12,13 +12,13 @@
     padding:10px;
 }
 
-.movie-search__btn{
+.seat-search__btn{
     padding: 10px 20px;
     background-color: rgb(144, 144, 253);
     color: white;
     cursor: pointer;
 }
-.movie-add__btn{
+.seat-add__btn{
     padding: 10px 20px;
     background-color: rgb(144, 144, 253);
     color: white;
@@ -33,23 +33,23 @@
 a{
     color:white;
 }
-.movie-list__img img{
+.seat-list__img img{
     width: 400px;
     height: 200px;
     object-fit: contain;
 }
-.movie .movie-three__dot {
+.seat .seat-three__dot {
     cursor: pointer;
   }
   
-  .movie-popover .movie-popover__content {
+  .seat-popover .seat-popover__content {
     display: flex;
     align-items: center;
     gap: 5px;
     padding: 10px;
   }
   
-  .movie-popover .movie-popover__content:hover {
+  .seat-popover .seat-popover__content:hover {
     cursor: pointer;
     background-color: bisque;
   }

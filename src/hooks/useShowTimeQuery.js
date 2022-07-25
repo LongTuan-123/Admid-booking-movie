@@ -1,14 +1,13 @@
 import { getAxios } from '../Http'
 import { useQuery } from 'react-query'
-import { API_SHOWTIME } from '../config/endpointapi'
-
+import { API_LIST_SHOWTIME } from '../config/endpointapi'
 
 const getShowtime = async ({ queryKey }) => {
   const [_, limit, keyword, page] = queryKey
 
   const params = { limit, keyword, page }
 
-  const data = await getAxios(API_SHOWTIME, params)
+  const data = await getAxios(API_LIST_SHOWTIME, params)
 
   return data
 }

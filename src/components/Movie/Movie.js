@@ -1,66 +1,80 @@
-/* eslint-disable jsx-a11y/alt-text */
-import { useEffect, useRef, useState } from 'react'
+import { Popover, Col, Row, Table, notification } from 'antd'
+import { useState } from 'react'
+import { API_MOVIE_DELETE } from '../../config/endpointapi'
+import { MOVIE, MOVIE_CREATE, MOVIE_UPDATE } from '../../config/path'
 import PrivateLayout from '../../Layout/PrivateLayout'
-import { Button, Col, Input, Row, Table } from 'antd'
-import axios from 'axios'
-import { API_MOVIE, API_MOVIE_DELETE } from '../../config/endpointapi'
-import { MOVIE_CREATE, MOVIE_UPDATE } from '../../config/path'
-import { Link } from 'react-router-dom'
-import { useHistory } from 'react-router-dom'
-import Cookies from 'cookies-js'
-import { bindParam } from '../../config/function'
 import '../../style/Movie.css'
-import { getToken } from '../../Http'
+import { bindParam } from '../../config/function'
+import { Link, useHistory, useLocation } from 'react-router-dom'
+import { useQueryClient } from 'react-query'
+import { postAxios } from '../../Http'
+import QueryString from 'qs'
+import { toast } from 'react-toastify'
+import Search from 'antd/lib/transfer/search'
+import useMovieQuery from '../../hooks/useMovieQuery'
+import { BsThreeDots } from 'react-icons/bs'
+import { AiFillDelete } from 'react-icons/ai'
+import { SmileOutlined } from '@ant-design/icons'
+import { MdUpdate } from 'react-icons/md'
 
 const Movie = () => {
-  const value = useRef()
-  const [status, setStatus] = useState(false)
-  const [limit, setLimit] = useState(10)
-  const [total, setTotal] = useState()
-  const [keyword, setKeyword] = useState('')
-  const [page, setPage] = useState(1)
-  const [data, setData] = useState([])
+  const location = useLocation()
   const history = useHistory()
+  const queryClient = useQueryClient()
+  const [isOpen, setIsOpen] = useState(false)
+  const [isOpenPopover, setIsPopover] = useState(false)
+  const searchUrl = QueryString.parse(location.search.substr(1))
+  const [idDelete, setIdDelete] = useState(0)
+  const [limit] = useState(searchUrl?.limit || 10)
+  const [keyword] = useState(searchUrl?.keyword || '')
+  const [page] = useState(searchUrl?.page || 1)
 
-  useEffect(() => {
-    const getmovies = async () => {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${getToken()}`
-      const params = { limit, page, keyword }
-      await axios
-        .get(API_MOVIE, { params })
-        .then((res) => {
-          setData(res?.data?.data?.data)
-          setTotal(res?.data?.data?.total)
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    }
-    getmovies()
-  }, [status, limit, page, keyword])
-
-  const onSearch = () => {
-    setKeyword(value.current.input.value)
-  }
-
-  const onDelete = async (id) => {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${getToken()}`
-    await axios.post(`${API_MOVIE_DELETE}/${id}`).then((res) => {
-      setStatus(!status)
+  const { data: movie, isError, isLoading, isFetching } = useMovieQuery([limit, keyword, page])
+  const data = movie?.data?.data || []
+  const onChangePage = (page, limit) => {
+    let params = { page, limit }
+    history.push({
+      pathname: MOVIE,
+      search: QueryString.stringify(params),
     })
   }
-
-  const onChangePage = (page, limit) => {
-    setPage(page)
-    setLimit(limit)
+  const onDelete = (id) => {
+    postAxios(bindParam(API_MOVIE_DELETE, { id }))
+      .then((res) => {
+        if (res.status === 1) {
+          queryClient.invalidateQueries(['movie'])
+          notification.open({
+            message: 'Delete Successed',
+            icon: <SmileOutlined style={{ color: '#108ee9' }} />,
+          })
+        }
+      })
+      .catch((err) => {
+        toast.error(err?.message)
+      })
+      .finally(() => {
+        setIsOpen(false)
+      })
   }
+  const onSearch = (movie) => {
+    let params = { page, limit, keyword: movie }
 
-  const onSwitchUpdate = (id) => {
+    history.push({
+      pathname: MOVIE,
+      search: QueryString.stringify(params),
+    })
+  }
+  const onOpenModal = (id) => {
+    setIdDelete(id)
+    setIsPopover(true)
+    setIsOpen(true)
+  }
+  const onGoToUpdate = (id) => {
     history.push(bindParam(MOVIE_UPDATE, { id }))
   }
 
   const columns = [
-    { title: 'ID Phim', dataIndex: 'id' },
+    { title: 'ID movie', dataIndex: 'id' },
     {
       title: 'Poster',
       render: (value, record) => {
@@ -78,35 +92,50 @@ const Movie = () => {
     { title: 'Range of movie', dataIndex: 'range_of_movie' },
     { title: 'Actor', dataIndex: 'actor' },
     { title: 'Director', dataIndex: 'director' },
-    { title: 'Description', dataIndex: 'description' },
     {
-      title: 'Action',
-      render: (value, record) => {
-        console.log(value)
+      title: '',
+      dataIndex: '',
+      width: '5%',
+      key: 'action',
+      render: ({ id }) => {
+        const content = (
+          <div className="movie-popover">
+            <div className="movie-popover__content" onClick={() => onOpenModal(id)}>
+              <AiFillDelete />
+              <div onClick={() => onDelete(id)}>Delete</div>
+            </div>
+            <div className="movie-popover__content" onClick={() => onGoToUpdate(id)}>
+              <MdUpdate />
+              <div>Update</div>
+            </div>
+          </div>
+        )
+
         return (
-          <>
-            <Button onClick={() => onSwitchUpdate(value?.id)}>Update</Button>
-            <Button onClick={() => onDelete(value?.id)}>Delete</Button>
-          </>
+          <Popover placement="bottom" content={content} trigger="click">
+            <BsThreeDots className="advertise-three__dot" />
+          </Popover>
         )
       },
     },
   ]
   return (
     <PrivateLayout>
-      <h2 style={{ fontSize: '32px', textTransform: 'uppercase' }}>Movies list</h2>
+      <h2 style={{ fontSize: '32px', textTransform: 'uppercase' }}>Table Movies</h2>
       <Row>
-        <Col span={22}>
-          <div className="movies-search">
-            <Input ref={value} placeholder="Search by First name" />
-            <div className="movies-search__btn" onClick={onSearch}>
-              Search
-            </div>
+        <Col span={20}>
+          <div className="movie-search">
+            <Search
+              loading={isFetching}
+              defaultadvertise={keyword}
+              onSearch={onSearch}
+              className="movie-content-search__input"
+            />
           </div>
         </Col>
-        <Col span={2}>
-          <div className="movies-add__btn" onClick={onSearch}>
-            <Link to={MOVIE_CREATE}>Create Movie</Link>
+        <Col span={4}>
+          <div className="movie-add__btn" onClick={onSearch}>
+            <Link to={MOVIE_CREATE}>Add Movie</Link>
           </div>
         </Col>
       </Row>
@@ -115,7 +144,7 @@ const Movie = () => {
         columns={columns}
         className="movie-table"
         pagination={{
-          total: total,
+          total: movie?.total,
           onChange: onChangePage,
           showSizeChanger: true,
           pageSizeOptions: [5, 10, 20, 30],

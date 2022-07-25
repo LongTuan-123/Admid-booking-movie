@@ -1,60 +1,42 @@
+import { Button, DatePicker, Form, Input, InputNumber, Select } from 'antd'
 import PrivateLayout from '../../Layout/PrivateLayout'
-import { Form, Select, InputNumber, Button, Input, DatePicker } from 'antd'
-import axios from 'axios'
 import { API_MOVIE_STORE } from '../../config/endpointapi'
-import moment from 'moment'
-import { useHistory } from 'react-router-dom'
 import { MOVIE } from '../../config/path'
-import { getToken } from '../../Http'
+import { useHistory } from 'react-router-dom'
+import { postAxios } from '../../Http'
+import { useQueryClient } from 'react-query'
+import moment from 'moment'
+import { Option } from 'antd/lib/mentions'
 
-const { Option } = Select
 
 const MovieCreate = () => {
   const history = useHistory()
-
-  // const onChange = (e) => {
-  //   console.log(e.target.value);
-  // };
+  const queryClient = useQueryClient()
 
   const formItemLayout = {
     labelCol: { span: 6 },
     wrapperCol: { span: 14 },
   }
+  const onCreateMovie = (value) => {
+    value.created_at = moment().format('YYYY-MM-DD HH:mm:ss')
 
-  // const normFile = (e) => {
-  //   console.log("Upload event:", e);
-  //   if (Array.isArray(e)) {
-  //     return e;
-  //   }
-  //   return e && e.fileList;
-  // };
-
-  const onFinish = (values) => {
-    const { type_of_movie, start_date } = values
-
-    if (type_of_movie) {
-      values.type_of_movie = type_of_movie.toString()
-    }
-    if (start_date) {
-      values.start_date = moment(start_date).format('YYYY-MM-DD')
-    }
-    values.created_at = moment().format('YYYY-MM-DD HH:mm:ss')
-    values.updated_at = moment().format('YYYY-MM-DD HH:mm:ss')
-
-    axios.defaults.headers.common['Authorization'] = `Bearer ${getToken()}`
-    axios
-      .post(API_MOVIE_STORE, values)
-      .then(function (res) {
-        history.push(MOVIE)
+    postAxios(API_MOVIE_STORE, value)
+      .then((res) => {
+        if (res.status === 1) {
+          queryClient.invalidateQueries(['movie'])
+          // toast.success(res?.message)
+          setTimeout(() => {
+            history.push(MOVIE)
+          }, 1000)
+        }
       })
-      .catch(function (err) {
+      .catch((err) => {
         console.log(err)
       })
   }
-
   return (
     <PrivateLayout>
-      <Form name="validate_other" {...formItemLayout} onFinish={onFinish}>
+      <Form name="validate_other" {...formItemLayout} onFinish={onCreateMovie}>
         <h2 style={{ fontSize: '2rem', textTransform: 'uppercase' }}>Add movie</h2>
 
         <Form.Item
@@ -64,7 +46,7 @@ const MovieCreate = () => {
           rules={[
             {
               required: true,
-              message: 'Please input your name',
+              message: 'Please input the name',
             },
           ]}
         >
@@ -90,7 +72,7 @@ const MovieCreate = () => {
           rules={[
             {
               required: true,
-              message: 'Nhập thời gian khởi chiếu',
+              message: 'Please input the start date',
             },
           ]}
         >
@@ -100,7 +82,7 @@ const MovieCreate = () => {
           name="dimension"
           label="Dimension"
           hasFeedback
-          rules={[{ required: true, message: 'Nhập loại phim' }]}
+          rules={[{ required: true, message: 'Please input the dimension of movie' }]}
         >
           <Select placeholder="Dimension">
             <Option value="2D">2D</Option>
@@ -114,7 +96,7 @@ const MovieCreate = () => {
           rules={[
             {
               required: true,
-              message: 'Nhập thể loại phim',
+              message: 'Please input the type of movie',
               type: 'array',
             },
           ]}
@@ -143,7 +125,7 @@ const MovieCreate = () => {
           rules={[
             {
               required: true,
-              message: 'Nhập tên diễn viên',
+              message: 'Please input the name of actor',
             },
           ]}
         >
@@ -156,7 +138,7 @@ const MovieCreate = () => {
           rules={[
             {
               required: true,
-              message: 'Nhập tên đạo diễn',
+              message: 'Please input the name of director',
             },
           ]}
         >
@@ -172,7 +154,7 @@ const MovieCreate = () => {
           rules={[
             {
               required: true,
-              message: 'Nhập ảnh',
+              message: 'Please input the poster',
             },
           ]}
         >
@@ -185,7 +167,7 @@ const MovieCreate = () => {
           rules={[
             {
               required: true,
-              message: 'Nhập link trailer',
+              message: 'Please input the trailer',
             },
           ]}
         >
@@ -194,7 +176,7 @@ const MovieCreate = () => {
 
         <Form.Item wrapperCol={{ span: 12, offset: 6 }}>
           <Button type="primary" htmlType="submit">
-            Submit
+            Create
           </Button>
         </Form.Item>
       </Form>

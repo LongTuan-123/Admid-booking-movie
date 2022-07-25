@@ -7,3 +7,12 @@
 .site-layout .site-layout-background {
   background: #fff;
 }
+.ticket-chart{
+  width:80%;
+  margin:auto;
+}
+.label{
+  font-size:2rem;
+  font-weight:600;
+  padding:16px 32px;
+}
