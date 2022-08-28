@@ -1,4 +1,4 @@
-export const BASE_API = 'https://stark-hamlet-03590.herokuapp.com/api'
+export const BASE_API = 'https://stark-hamlet-03590.herokuapp.com'
 
 // Api user for login register
 export const API_LOGIN = `${BASE_API}/api/auth/login`
