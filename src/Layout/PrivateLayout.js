@@ -12,8 +12,6 @@ import { BiMovie } from 'react-icons/bi'
 import { BsFillDoorOpenFill } from 'react-icons/bs'
 import { BsFillCalendarWeekFill } from 'react-icons/bs'
 import { BsNewspaper } from 'react-icons/bs'
-import { MdEventSeat } from 'react-icons/md'
-import { FaTicketAlt } from 'react-icons/fa'
 import { FaChair } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import { ADVERTISEMENT, LOGIN, MOVIE, NEWS, ROOM, SEAT, SHOWTIME, TICKET, USER } from '../config/path'
@@ -24,13 +22,9 @@ import { API_LOGOUT } from '../config/endpointapi'
 import { useHistory } from 'react-router-dom'
 
 const PrivateLayout = ({ children }) => {
-  const { Header, Content, Footer, Sider } = Layout
-  const { SubMenu } = Menu
+  const { Header, Content, Sider } = Layout
   const history = useHistory()
-  const [slidebar, setSlidebar] = useState(false)
-  const onCollapsed = () => {
-    setSlidebar(!slidebar)
-  }
+  const [slidebar] = useState(false)
 
   const onLogout = async () => {
     await axios
@@ -102,7 +96,6 @@ const PrivateLayout = ({ children }) => {
               {children}
             </div>
           </Content>
-          <Footer style={{ textAlign: 'center' }}>LongDT Cinema Created by Đặng Tuấn Long</Footer>
         </Layout>
       </Layout>
     </div>
