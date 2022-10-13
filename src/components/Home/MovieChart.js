@@ -1,21 +1,10 @@
 import { DatePicker } from 'antd'
-import {
-  Chart as ChartJS,
-  LinearScale,
-  CategoryScale,
-  BarElement,
-  PointElement,
-  LineElement,
-  Legend,
-  Tooltip,
-} from 'chart.js'
 import moment from 'moment'
 import { useEffect, useRef, useState } from 'react'
 import { Chart } from 'react-chartjs-2'
 import useMovieChartQuery from '../../hooks/useMovieChartQuery'
 
 const { RangePicker } = DatePicker
-ChartJS.register(LinearScale, CategoryScale, BarElement, PointElement, LineElement, Legend, Tooltip)
 
 const MovieChart = () => {
   const [startDate, setStartDate] = useState(moment().subtract(30, 'days'))
