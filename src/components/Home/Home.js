@@ -6,22 +6,10 @@ import { getToken } from '../../Http'
 import PrivateLayout from '../../Layout/PrivateLayout'
 import '../../style/Home.css'
 import moment from 'moment'
-import {
-  Chart as ChartJS,
-  LinearScale,
-  CategoryScale,
-  BarElement,
-  PointElement,
-  LineElement,
-  Legend,
-  Tooltip,
-} from 'chart.js'
 import { Chart } from 'react-chartjs-2'
 import MovieChart from './MovieChart'
 
 const { RangePicker } = DatePicker
-
-ChartJS.register(LinearScale, CategoryScale, BarElement, PointElement, LineElement, Legend, Tooltip)
 
 const Home = () => {
   const [data, setData] = useState()
