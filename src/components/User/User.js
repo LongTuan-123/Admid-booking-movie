@@ -16,11 +16,10 @@ const User = () => {
   useEffect(() => {
     const getUser = async () => {
       const params = { limit, page, keyword }
-      await getAxios(API_LIST_USER, { params })
+      await getAxios(API_LIST_USER, params)
         .then((res) => {
-          setData(res?.data?.data?.data)
-          setTotal(res?.data?.data?.total)
-          console.log(res?.data?.data?.data)
+          setData(res?.data?.data)
+          setTotal(res?.data?.total)
         })
         .catch((err) => {
           console.log(err)

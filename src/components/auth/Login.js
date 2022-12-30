@@ -14,9 +14,9 @@ const Login = () => {
   const onFinish = (values) => {
     postAxios(API_LOGIN, values)
       .then(function (res) {
-        if (res?.data?.user?.role === 1) {
-          Cookies.set('data', JSON.stringify(res.data.user))
-          Cookies.set('token', res.data.access_token)
+        if (res?.user?.role === 1) {
+          Cookies.set('data', JSON.stringify(res.user))
+          Cookies.set('token', res.access_token)
           history.push(HOME)
         } else {
           alert('Bạn không có quyền')

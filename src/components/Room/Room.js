@@ -19,10 +19,10 @@ const Room = () => {
   useEffect(() => {
     const getMovies = async () => {
       const params = { limit, page, keyword }
-      await getAxios(API_LIST_ROOM, { params })
+      await getAxios(API_LIST_ROOM, params)
         .then((res) => {
-          setData(res?.data?.data?.data)
-          setTotal(res?.data?.data?.total)
+          setData(res?.data?.data)
+          setTotal(res?.data?.total)
         })
         .catch((err) => {
           console.log(err)
