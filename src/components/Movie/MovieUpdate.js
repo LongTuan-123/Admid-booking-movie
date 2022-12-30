@@ -16,7 +16,6 @@ const MovieUpdate = () => {
   const { id } = useParams()
   const [data, setData] = useState({})
   const [form] = Form.useForm()
-  const [defaultValue, setDefaultValue] = useState({})
   const history = useHistory()
 
   const getData = async () => {

@@ -17,10 +17,10 @@ const Ticket = () => {
   useEffect(() => {
     const getTicket = async () => {
       const params = { limit, page, keyword, date: moment().format('YYYY-MM-DD') }
-      await getAxios(API_LIST_TICKET, { params })
+      await getAxios(API_LIST_TICKET, params)
         .then((res) => {
-          setData(res?.data?.data?.data)
-          setTotal(res?.data?.data?.total)
+          setData(res?.data?.data)
+          setTotal(res?.data?.total)
           console.log(res)
         })
         .catch((err) => {

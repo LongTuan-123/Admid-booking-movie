@@ -25,10 +25,10 @@ const Seat = () => {
   useEffect(() => {
     const getSeats = async () => {
       const params = { limit, page, keyword }
-      await getAxios(API_SEAT, { params })
+      await getAxios(API_SEAT, params)
         .then((res) => {
-          setData(res?.data?.data?.data)
-          setTotal(res?.data?.data?.total)
+          setData(res?.data?.data)
+          setTotal(res?.data?.total)
         })
         .catch((err) => {
           console.log(err)

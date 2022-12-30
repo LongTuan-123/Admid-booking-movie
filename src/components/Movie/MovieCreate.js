@@ -1,11 +1,10 @@
 import PrivateLayout from '../../Layout/PrivateLayout'
 import { Form, Select, InputNumber, Button, Input, DatePicker } from 'antd'
-import axios from 'axios'
 import { API_MOVIE_STORE } from '../../config/endpointapi'
 import moment from 'moment'
 import { useHistory } from 'react-router-dom'
 import { MOVIE } from '../../config/path'
-import { getToken, postAxios } from '../../Http'
+import { postAxios } from '../../Http'
 
 const { Option } = Select
 
