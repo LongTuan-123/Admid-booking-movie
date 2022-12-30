@@ -5,7 +5,7 @@ import { API_MOVIE_STORE } from '../../config/endpointapi'
 import moment from 'moment'
 import { useHistory } from 'react-router-dom'
 import { MOVIE } from '../../config/path'
-import { getToken } from '../../Http'
+import { getToken, postAxios } from '../../Http'
 
 const { Option } = Select
 
@@ -41,9 +41,7 @@ const MovieCreate = () => {
     values.created_at = moment().format('YYYY-MM-DD HH:mm:ss')
     values.updated_at = moment().format('YYYY-MM-DD HH:mm:ss')
 
-    axios.defaults.headers.common['Authorization'] = `Bearer ${getToken()}`
-    axios
-      .post(API_MOVIE_STORE, values)
+    postAxios(API_MOVIE_STORE, values)
       .then(function (res) {
         history.push(MOVIE)
       })

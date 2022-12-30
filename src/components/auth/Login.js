@@ -1,21 +1,18 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { Button, Form, Input } from 'antd'
 import { useHistory } from 'react-router-dom'
-import axios from 'axios'
 import { HOME } from '../../config/path'
 import { API_LOGIN } from '../../config/endpointapi'
 import Cookies from 'cookies-js'
 import '../auth/Login.css'
 import Logo from '../../asset/Logo-main.png'
-import { getToken } from '../../Http'
+import { postAxios } from '../../Http'
 
 const Login = () => {
   const history = useHistory()
 
   const onFinish = (values) => {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${getToken()}`
-    axios
-      .post(API_LOGIN, values)
+    postAxios(API_LOGIN, values)
       .then(function (res) {
         if (res?.data?.user?.role === 1) {
           Cookies.set('data', JSON.stringify(res.data.user))

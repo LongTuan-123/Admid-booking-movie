@@ -1,14 +1,14 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { Button, Col, Input, Row, Table } from 'antd'
-import axios from 'axios'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useHistory } from 'react-router-dom'
-import { API_LIST_NEWS, API_NEWS_DELETE, API_NEWS_UPDATE } from '../../config/endpointapi'
+import { API_LIST_NEWS, API_NEWS_DELETE } from '../../config/endpointapi'
 import { bindParam } from '../../config/function'
 import { NEWS_CREATE, NEWS_UPDATE } from '../../config/path'
 import PrivateLayout from '../../Layout/PrivateLayout'
 import '../../style/News.css'
+import { getAxios, postAxios } from '../../Http'
 
 const News = () => {
   const value = useRef()
@@ -20,10 +20,9 @@ const News = () => {
   const [data, setData] = useState([])
   const history = useHistory()
   useEffect(() => {
-    const getmovies = async () => {
+    const getMovies = async () => {
       const params = { limit, page, keyword }
-      await axios
-        .get(API_LIST_NEWS, { params })
+      await getAxios(API_LIST_NEWS, { params })
         .then((res) => {
           setData(res?.data?.data?.data)
           setTotal(res?.data?.data?.total)
@@ -32,14 +31,14 @@ const News = () => {
           console.log(err)
         })
     }
-    getmovies()
+    getMovies()
   }, [status, limit, page, keyword])
   const onSearch = () => {
     setKeyword(value.current.input.value)
   }
 
   const onDelete = async (id) => {
-    await axios.post(bindParam(API_NEWS_DELETE, { id })).then((res) => {
+    await postAxios(bindParam(API_NEWS_DELETE, { id })).then((res) => {
       console.log(value?.id)
       setStatus(!status)
     })

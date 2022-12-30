@@ -1,48 +1,32 @@
-import { Button, Form, Input } from "antd";
-import axios from "axios";
-import { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { API_NEWS_STORE } from "../../config/endpointapi";
-import { NEWS } from "../../config/path";
-import PrivateLayout from "../../Layout/PrivateLayout";
-import Cookies from "cookies-js";
-import { getToken } from "../../Http";
+import { Button, Form, Input } from 'antd'
+import { useHistory } from 'react-router-dom'
+import { API_NEWS_STORE } from '../../config/endpointapi'
+import { NEWS } from '../../config/path'
+import PrivateLayout from '../../Layout/PrivateLayout'
+import { postAxios } from '../../Http'
 
 const NewsCreate = () => {
-  const history = useHistory();
+  const history = useHistory()
 
-  const onChange = (e) => {
-    console.log(e.target.value);
-  };
   const formItemLayout = {
     labelCol: { span: 6 },
     wrapperCol: { span: 14 },
-  };
+  }
 
-  const normFile = (e) => {
-    console.log("Upload event:", e);
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e && e.fileList;
-  };
   const onFinish = (values) => {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${getToken()}`;
-    axios
-      .post(API_NEWS_STORE, values)
+    postAxios(API_NEWS_STORE, values)
       .then(function (res) {
-        history.push(NEWS);
+        history.push(NEWS)
       })
       .catch(function (err) {
-        console.log(err);
-      });
-  };
+        console.log(err)
+      })
+  }
+
   return (
     <PrivateLayout>
       <Form name="validate_other" {...formItemLayout} onFinish={onFinish}>
-        <h2 style={{ fontSize: "2rem", textTransform: "uppercase" }}>
-          Thêm tin tức
-        </h2>
+        <h2 style={{ fontSize: '2rem', textTransform: 'uppercase' }}>Thêm tin tức</h2>
         <Form.Item
           {...formItemLayout}
           name="name"
@@ -50,7 +34,7 @@ const NewsCreate = () => {
           rules={[
             {
               required: true,
-              message: "Điền tiêu đề",
+              message: 'Điền tiêu đề',
             },
           ]}
         >
@@ -63,7 +47,7 @@ const NewsCreate = () => {
           rules={[
             {
               required: true,
-              message: "Nhập thông tin ảnh",
+              message: 'Nhập thông tin ảnh',
             },
           ]}
         >
@@ -76,7 +60,7 @@ const NewsCreate = () => {
           rules={[
             {
               required: true,
-              message: "Nhập tóm tắt mô tả",
+              message: 'Nhập tóm tắt mô tả',
             },
           ]}
         >
@@ -89,7 +73,7 @@ const NewsCreate = () => {
           rules={[
             {
               required: true,
-              message: "Nhập nội dung chi tiết",
+              message: 'Nhập nội dung chi tiết',
             },
           ]}
         >
@@ -103,6 +87,6 @@ const NewsCreate = () => {
         </Form.Item>
       </Form>
     </PrivateLayout>
-  );
-};
-export default NewsCreate;
+  )
+}
+export default NewsCreate
