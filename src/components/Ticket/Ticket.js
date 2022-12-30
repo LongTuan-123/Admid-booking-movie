@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import axios from 'axios'
 import { Input, Table } from 'antd'
 import PrivateLayout from '../../Layout/PrivateLayout'
 import { API_LIST_TICKET } from '../../config/endpointapi'
 import '../../style/Ticket.css'
-import { getToken } from '../../Http'
+import { getAxios } from '../../Http'
 import moment from 'moment'
 
 const Ticket = () => {
@@ -18,9 +17,7 @@ const Ticket = () => {
   useEffect(() => {
     const getTicket = async () => {
       const params = { limit, page, keyword, date: moment().format('YYYY-MM-DD') }
-      axios.defaults.headers.common['Authorization'] = `Bearer ${getToken()}`
-      await axios
-        .get(API_LIST_TICKET, { params })
+      await getAxios(API_LIST_TICKET, { params })
         .then((res) => {
           setData(res?.data?.data?.data)
           setTotal(res?.data?.data?.total)

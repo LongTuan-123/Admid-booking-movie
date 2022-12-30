@@ -1,36 +1,33 @@
-import PrivateLayout from "../../Layout/PrivateLayout";
-import { Form, Select, InputNumber, Button, Input, DatePicker } from "antd";
-import axios from "axios";
-import { API_MOVIE_DETAIL, API_MOVIE_UPDATE } from "../../config/endpointapi";
-import { useEffect, useState } from "react";
-import Cookies from "cookies-js";
-import moment from "moment";
-import { useHistory } from "react-router-dom";
-import { MOVIE } from "../../config/path";
-import { useParams } from "react-router-dom";
-import { bindParam } from "../../config/function";
-import { getToken } from "../../Http";
+import PrivateLayout from '../../Layout/PrivateLayout'
+import { Form, Select, InputNumber, Button, Input, DatePicker } from 'antd'
+import axios from 'axios'
+import { API_MOVIE_DETAIL, API_MOVIE_UPDATE } from '../../config/endpointapi'
+import { useEffect, useState } from 'react'
+import moment from 'moment'
+import { useHistory } from 'react-router-dom'
+import { MOVIE } from '../../config/path'
+import { useParams } from 'react-router-dom'
+import { bindParam } from '../../config/function'
+import { getAxios, getToken } from '../../Http'
 
-const { Option } = Select;
+const { Option } = Select
 
 const MovieUpdate = () => {
-  const { id } = useParams();
-  const [data, setData] = useState({});
-  const [form] = Form.useForm();
-  const [defaultValue, setDefaultValue] = useState({});
-  const history = useHistory();
+  const { id } = useParams()
+  const [data, setData] = useState({})
+  const [form] = Form.useForm()
+  const [defaultValue, setDefaultValue] = useState({})
+  const history = useHistory()
 
   const getData = async () => {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${getToken()}`;
-    await axios
-      .get(bindParam(API_MOVIE_DETAIL, { id }))
+    await getAxios(bindParam(API_MOVIE_DETAIL, { id }))
       .then((res) => {
-        setData(res?.data?.data);
+        setData(res?.data?.data)
       })
       .catch((err) => {
-        console.log(err);
-      });
-  };
+        console.log(err)
+      })
+  }
 
   useEffect(() => {
     if (data) {
@@ -39,64 +36,56 @@ const MovieUpdate = () => {
         range_of_movie: data?.range_of_movie,
         start_date: moment(data?.start_date),
         dimension: data?.dimension,
-        type_of_movie: data?.type_of_movie?.split(","),
+        type_of_movie: data?.type_of_movie?.split(','),
         range_age: data?.range_age,
         actor: data?.actor,
         direct: data?.director,
         description: data?.description,
         poster: data?.poster,
         trailer: data?.trailer,
-      });
+      })
     }
-  }, [data, form]);
+  }, [data, form])
 
   useEffect(() => {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${getToken()}`;
-    getData();
-  }, []);
+    axios.defaults.headers.common['Authorization'] = `Bearer ${getToken()}`
+    getData()
+  }, [])
 
   const formItemLayout = {
     labelCol: { span: 6 },
     wrapperCol: { span: 14 },
-  };
+  }
 
   const onFinish = (values) => {
-    const { type_of_movie, start_date } = values;
+    const { type_of_movie, start_date } = values
 
     if (id) {
-      values.id = Number(id);
+      values.id = Number(id)
     }
     if (type_of_movie) {
-      values.type_of_movie = type_of_movie.toString();
+      values.type_of_movie = type_of_movie.toString()
     }
     if (start_date) {
-      values.start_date = moment(start_date).format("YYYY-MM-DD");
+      values.start_date = moment(start_date).format('YYYY-MM-DD')
     }
 
-    axios.defaults.headers.common["Authorization"] = `Bearer ${getToken()}`;
+    axios.defaults.headers.common['Authorization'] = `Bearer ${getToken()}`
     axios
       .post(API_MOVIE_UPDATE, values)
       .then(function (res) {
-        history.push(MOVIE);
+        history.push(MOVIE)
       })
       .catch(function (err) {
-        console.log(err);
-      });
-  };
+        console.log(err)
+      })
+  }
 
-  console.log(data);
+  console.log(data)
   return (
     <PrivateLayout>
-      <Form
-        name="validate_other"
-        initialValues={data}
-        {...formItemLayout}
-        form={form}
-        onFinish={onFinish}
-      >
-        <h2 style={{ fontSize: "2rem", textTransform: "uppercase" }}>
-          sửa phim
-        </h2>
+      <Form name="validate_other" initialValues={data} {...formItemLayout} form={form} onFinish={onFinish}>
+        <h2 style={{ fontSize: '2rem', textTransform: 'uppercase' }}>sửa phim</h2>
 
         <Form.Item
           {...formItemLayout}
@@ -105,7 +94,7 @@ const MovieUpdate = () => {
           rules={[
             {
               required: true,
-              message: "Please input your name",
+              message: 'Please input your name',
             },
           ]}
         >
@@ -118,7 +107,7 @@ const MovieUpdate = () => {
           rules={[
             {
               required: true,
-              message: "Nhập thời lượng phim",
+              message: 'Nhập thời lượng phim',
             },
           ]}
         >
@@ -131,17 +120,17 @@ const MovieUpdate = () => {
           rules={[
             {
               required: true,
-              message: "Nhập thời gian khởi chiếu",
+              message: 'Nhập thời gian khởi chiếu',
             },
           ]}
         >
-          <DatePicker style={{ width: "70%" }} />
+          <DatePicker style={{ width: '70%' }} />
         </Form.Item>
         <Form.Item
           name="dimension"
           label="Loại phim"
           hasFeedback
-          rules={[{ required: true, message: "Nhập loại phim" }]}
+          rules={[{ required: true, message: 'Nhập loại phim' }]}
         >
           <Select placeholder="Loại phim">
             <Option value="2D">2D</Option>
@@ -155,8 +144,8 @@ const MovieUpdate = () => {
           rules={[
             {
               required: true,
-              message: "Nhập thể loại phim",
-              type: "array",
+              message: 'Nhập thể loại phim',
+              type: 'array',
             },
           ]}
         >
@@ -182,7 +171,7 @@ const MovieUpdate = () => {
           rules={[
             {
               required: true,
-              message: "Nhập tên diễn viên",
+              message: 'Nhập tên diễn viên',
             },
           ]}
         >
@@ -195,17 +184,13 @@ const MovieUpdate = () => {
           rules={[
             {
               required: true,
-              message: "PNhập tên đạo diễn",
+              message: 'PNhập tên đạo diễn',
             },
           ]}
         >
           <Input />
         </Form.Item>
-        <Form.Item
-          name="description"
-          label="Mô tả"
-          rules={[{ required: true, message: "Nhập mô tả" }]}
-        >
+        <Form.Item name="description" label="Mô tả" rules={[{ required: true, message: 'Nhập mô tả' }]}>
           <Input.TextArea rows={5} showCount maxLength={1000} />
         </Form.Item>
         <Form.Item
@@ -215,7 +200,7 @@ const MovieUpdate = () => {
           rules={[
             {
               required: true,
-              message: "Nhập ảnh",
+              message: 'Nhập ảnh',
             },
           ]}
         >
@@ -228,7 +213,7 @@ const MovieUpdate = () => {
           rules={[
             {
               required: true,
-              message: "Nhập link trailer",
+              message: 'Nhập link trailer',
             },
           ]}
         >
@@ -242,6 +227,6 @@ const MovieUpdate = () => {
         </Form.Item>
       </Form>
     </PrivateLayout>
-  );
-};
-export default MovieUpdate;
+  )
+}
+export default MovieUpdate

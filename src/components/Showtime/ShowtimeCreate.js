@@ -1,26 +1,14 @@
-import PrivateLayout from "../../Layout/PrivateLayout";
-import {
-  Form,
-  Select,
-  InputNumber,
-  Button,
-  Input,
-  DatePicker,
-  TimePicker,
-} from "antd";
-import axios from "axios";
-import {
-  API_MOVIE_SELECT,
-  API_ROOM_SELECT,
-  API_SHOWTIME_CREATE,
-} from "../../config/endpointapi";
-import { useEffect, useState } from "react";
-import Cookies from "cookies-js";
-import { useHistory } from "react-router-dom";
-import { SEAT, SHOWTIME } from "../../config/path";
-import moment from "moment";
+import PrivateLayout from '../../Layout/PrivateLayout'
+import { Form, Select, Button, DatePicker, TimePicker } from 'antd'
+import { API_MOVIE_SELECT, API_ROOM_SELECT, API_SHOWTIME_CREATE } from '../../config/endpointapi'
+import { useEffect, useState } from 'react'
+import Cookies from 'cookies-js'
+import { useHistory } from 'react-router-dom'
+import { SHOWTIME } from '../../config/path'
+import moment from 'moment'
+import { getAxios, postAxios } from '../../Http'
 
-const { Option } = Select;
+const { Option } = Select
 
 const ShowTimeCreate = () => {
   const [token] = useState(Cookies?.get('token'))
@@ -38,10 +26,8 @@ const ShowTimeCreate = () => {
   }
 
   useEffect(() => {
-    axios.defaults.headers.common = { Authorization: `Bearer ${token}` }
     const getMovieSelect = async () => {
-      await axios
-        .get(API_ROOM_SELECT)
+      await getAxios(API_ROOM_SELECT)
         .then((res) => {
           setRoomSelect(res?.data?.data)
         })
@@ -67,9 +53,7 @@ const ShowTimeCreate = () => {
     values.created_at = moment().format('YYYY-MM-DD HH:mm:ss')
     values.updated_at = moment().format('YYYY-MM-DD HH:mm:ss')
 
-    axios.defaults.headers.common = { Authorization: `Bearer ${token}` }
-    axios
-      .post(API_SHOWTIME_CREATE, values)
+    postAxios(API_SHOWTIME_CREATE, values)
       .then(function (res) {
         history.push(SHOWTIME)
       })
@@ -79,10 +63,8 @@ const ShowTimeCreate = () => {
   }
 
   useEffect(() => {
-    axios.defaults.headers.common = { Authorization: `Bearer ${token}` }
     const getMovieSelect = async () => {
-      await axios
-        .get(API_MOVIE_SELECT)
+      await getAxios(API_MOVIE_SELECT)
         .then((res) => {
           setMovieSelect(res?.data?.data)
         })

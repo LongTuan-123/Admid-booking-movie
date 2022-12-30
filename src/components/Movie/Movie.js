@@ -7,10 +7,9 @@ import { API_MOVIE, API_MOVIE_DELETE } from '../../config/endpointapi'
 import { MOVIE_CREATE, MOVIE_UPDATE } from '../../config/path'
 import { Link } from 'react-router-dom'
 import { useHistory } from 'react-router-dom'
-import Cookies from 'cookies-js'
 import { bindParam } from '../../config/function'
 import '../../style/Movie.css'
-import { getToken } from '../../Http'
+import { getAxios, postAxios } from '../../Http'
 
 const Movie = () => {
   const value = useRef()
@@ -23,11 +22,9 @@ const Movie = () => {
   const history = useHistory()
 
   useEffect(() => {
-    const getmovies = async () => {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${getToken()}`
+    const getMovies = async () => {
       const params = { limit, page, keyword }
-      await axios
-        .get(API_MOVIE, { params })
+      await getAxios(API_MOVIE, { params })
         .then((res) => {
           setData(res?.data?.data?.data)
           setTotal(res?.data?.data?.total)
@@ -36,7 +33,7 @@ const Movie = () => {
           console.log(err)
         })
     }
-    getmovies()
+    getMovies()
   }, [status, limit, page, keyword])
 
   const onSearch = () => {
@@ -44,8 +41,7 @@ const Movie = () => {
   }
 
   const onDelete = async (id) => {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${getToken()}`
-    await axios.post(`${API_MOVIE_DELETE}/${id}`).then((res) => {
+    await postAxios(`${API_MOVIE_DELETE}/${id}`).then((res) => {
       setStatus(!status)
     })
   }

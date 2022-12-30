@@ -1,63 +1,52 @@
-import PrivateLayout from "../../Layout/PrivateLayout";
-import { Form, Select, InputNumber, Button, Input, DatePicker } from "antd";
-import axios from "axios";
-import { API_ROOM_SELECT, API_SEAT_CREATE } from "../../config/endpointapi";
-import { useEffect, useState } from "react";
-import Cookies from "cookies-js";
-import { useHistory } from "react-router-dom";
-import { SEAT } from "../../config/path";
-import { getToken } from "../../Http";
+import PrivateLayout from '../../Layout/PrivateLayout'
+import { Form, Select, Button, Input } from 'antd'
+import { API_ROOM_SELECT, API_SEAT_CREATE } from '../../config/endpointapi'
+import { useEffect, useState } from 'react'
+import Cookies from 'cookies-js'
+import { useHistory } from 'react-router-dom'
+import { SEAT } from '../../config/path'
+import { getAxios, postAxios } from '../../Http'
 
-const { Option } = Select;
+const { Option } = Select
 
 const SeatCreate = () => {
-  const [token] = useState(Cookies?.get("token"));
-  const [movieSelect, setMovieSelect] = useState([]);
-  const history = useHistory();
-
-  // const onChange = (e) => {
-  //   console.log(e.target.value);
-  // };
+  const [token] = useState(Cookies?.get('token'))
+  const [movieSelect, setMovieSelect] = useState([])
+  const history = useHistory()
 
   const formItemLayout = {
     labelCol: { span: 6 },
     wrapperCol: { span: 14 },
-  };
+  }
 
   useEffect(() => {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${getToken()}`;
     const getMovieSelect = async () => {
-      await axios
-        .get(API_ROOM_SELECT)
+      await getAxios(API_ROOM_SELECT)
         .then((res) => {
-          setMovieSelect(res?.data?.data);
+          setMovieSelect(res?.data?.data)
         })
         .catch((err) => {
-          console.log(err);
-        });
-    };
+          console.log(err)
+        })
+    }
 
-    getMovieSelect();
-  }, [token]);
+    getMovieSelect()
+  }, [token])
 
   const onFinish = (values) => {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${getToken()}`;
-    axios
-      .post(API_SEAT_CREATE, values)
+    postAxios(API_SEAT_CREATE, values)
       .then(function (res) {
-        history.push(SEAT);
+        history.push(SEAT)
       })
       .catch(function (err) {
-        console.log(err);
-      });
-  };
+        console.log(err)
+      })
+  }
 
   return (
     <PrivateLayout>
       <Form name="validate_other" {...formItemLayout} onFinish={onFinish}>
-        <h2 style={{ fontSize: "2rem", textTransform: "uppercase" }}>
-          Thêm ghế
-        </h2>
+        <h2 style={{ fontSize: '2rem', textTransform: 'uppercase' }}>Thêm ghế</h2>
 
         <Form.Item
           {...formItemLayout}
@@ -66,7 +55,7 @@ const SeatCreate = () => {
           rules={[
             {
               required: true,
-              message: "Please input your row",
+              message: 'Please input your row',
             },
           ]}
         >
@@ -90,11 +79,11 @@ const SeatCreate = () => {
           rules={[
             {
               required: true,
-              message: "Nhập số lượng cột trong hàng",
+              message: 'Nhập số lượng cột trong hàng',
             },
           ]}
         >
-          <Input type={"number"} />
+          <Input type={'number'} />
         </Form.Item>
 
         <Form.Item
@@ -104,11 +93,11 @@ const SeatCreate = () => {
           rules={[
             {
               required: true,
-              message: "Nhập số tiền",
+              message: 'Nhập số tiền',
             },
           ]}
         >
-          <Input type={"number"} />
+          <Input type={'number'} />
         </Form.Item>
         <Form.Item
           name="type_seat"
@@ -116,7 +105,7 @@ const SeatCreate = () => {
           rules={[
             {
               required: true,
-              message: "Nhập thể loại ghế",
+              message: 'Nhập thể loại ghế',
             },
           ]}
         >
@@ -132,13 +121,13 @@ const SeatCreate = () => {
           rules={[
             {
               required: true,
-              message: "Nhập phòng chiếu",
+              message: 'Nhập phòng chiếu',
             },
           ]}
         >
           <Select placeholder="Please select movie">
             {movieSelect?.map((movie) => {
-              return <Option value={movie?.id}>{movie?.name}</Option>;
+              return <Option value={movie?.id}>{movie?.name}</Option>
             })}
           </Select>
         </Form.Item>
@@ -150,7 +139,7 @@ const SeatCreate = () => {
         </Form.Item>
       </Form>
     </PrivateLayout>
-  );
-};
+  )
+}
 
-export default SeatCreate;
+export default SeatCreate

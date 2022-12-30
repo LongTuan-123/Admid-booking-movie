@@ -1,5 +1,15 @@
 import axios from 'axios'
 import { DatePicker } from 'antd'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js'
 import { useEffect, useRef, useState } from 'react'
 import { API_TICKET_DATE } from '../../config/endpointapi'
 import { getToken } from '../../Http'
@@ -10,6 +20,8 @@ import { Chart } from 'react-chartjs-2'
 import MovieChart from './MovieChart'
 
 const { RangePicker } = DatePicker
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
 
 const Home = () => {
   const [data, setData] = useState()

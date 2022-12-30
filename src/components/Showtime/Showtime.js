@@ -1,13 +1,12 @@
 import PrivateLayout from '../../Layout/PrivateLayout'
 import { Button, Col, Input, Row, Table } from 'antd'
-import axios from 'axios'
 import { useEffect, useRef, useState } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { API_LIST_SHOWTIME, API_SHOWTIME_DELETE } from '../../config/endpointapi'
 import { bindParam } from '../../config/function'
 import { SHOWTIME_CREATE } from '../../config/path'
 import '../../style/Showtime.css'
-import { getToken } from '../../Http'
+import { getAxios, postAxios } from '../../Http'
 
 const ShowTime = () => {
   const value = useRef()
@@ -17,7 +16,6 @@ const ShowTime = () => {
   const [keyword, setKeyword] = useState('')
   const [page, setPage] = useState(1)
   const [data, setData] = useState([])
-  const history = useHistory()
 
   const onSearch = () => {
     setKeyword(value.current.input.value)
@@ -26,8 +24,7 @@ const ShowTime = () => {
   useEffect(() => {
     const getShowtime = async () => {
       const params = { limit, page, keyword }
-      await axios
-        .get(API_LIST_SHOWTIME, { params })
+      await getAxios(API_LIST_SHOWTIME, { params })
         .then((res) => {
           setData(res?.data?.data?.data)
           setTotal(res?.data?.data?.total)
@@ -40,9 +37,7 @@ const ShowTime = () => {
   }, [status, limit, page, keyword])
 
   const onDelete = async (id) => {
-    axios.defaults.headers.common['AUTHORIZATION'] = `Bearer ${getToken()}`
-
-    await axios.post(bindParam(API_SHOWTIME_DELETE, { id })).then((res) => {
+    await postAxios(bindParam(API_SHOWTIME_DELETE, { id })).then((res) => {
       setStatus(!status)
     })
   }

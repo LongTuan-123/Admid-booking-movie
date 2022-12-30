@@ -1,28 +1,22 @@
 import { Button, Form, Input } from 'antd'
-import { useState } from 'react'
 import PrivateLayout from '../../Layout/PrivateLayout'
-import Cookies from 'cookies-js'
-import axios from 'axios'
 import { API_ADVERTISEMENT_STORE } from '../../config/endpointapi'
 import { ADVERTISEMENT } from '../../config/path'
-import { useHistory, useLocation } from 'react-router-dom'
-import { getToken, postAxios } from '../../Http'
-import useAdvertisementCreate from '../../hooks/useAdvertisementCreate'
-import QueryString from 'qs'
+import { useHistory } from 'react-router-dom'
+import { postAxios } from '../../Http'
 import { useQueryClient } from 'react-query'
 import moment from 'moment'
 
 const AdvertisementCreate = () => {
   const history = useHistory()
   const queryClient = useQueryClient()
-  const location = useLocation()
 
   const formItemLayout = {
     labelCol: { span: 6 },
     wrapperCol: { span: 14 },
   }
 
-  const onCreateAdvettisement = (value) => {
+  const onCreateAdvertisement = (value) => {
     value.created_at = moment().format('YYYY-MM-DD HH:mm:ss')
 
     postAxios(API_ADVERTISEMENT_STORE, value)
@@ -39,9 +33,10 @@ const AdvertisementCreate = () => {
         console.log(err)
       })
   }
+
   return (
     <PrivateLayout>
-      <Form name="validate_other" {...formItemLayout} onFinish={onCreateAdvettisement}>
+      <Form name="validate_other" {...formItemLayout} onFinish={onCreateAdvertisement}>
         <h2 style={{ fontSize: '2rem', textTransform: 'uppercase' }}>Add Advertisement</h2>
 
         <Form.Item
