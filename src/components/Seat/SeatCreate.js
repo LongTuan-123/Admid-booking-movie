@@ -6,7 +6,6 @@ import Cookies from 'cookies-js'
 import { useHistory } from 'react-router-dom'
 import { SEAT } from '../../config/path'
 import { getAxios, postAxios } from '../../Http'
-
 const { Option } = Select
 
 const SeatCreate = () => {
@@ -23,7 +22,7 @@ const SeatCreate = () => {
     const getMovieSelect = async () => {
       await getAxios(API_ROOM_SELECT)
         .then((res) => {
-          setMovieSelect(res?.data?.data)
+          setMovieSelect(res?.data)
         })
         .catch((err) => {
           console.log(err)

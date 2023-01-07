@@ -2,13 +2,13 @@ import axios from 'axios'
 import qs from 'qs'
 import { AUTH_TOKEN, USER_INFO } from './config/const'
 import { LOGIN } from './config/path'
-import Cookies from "cookies-js";
+import Cookies from 'cookies-js'
 
 /**
  * Get access token
  */
 export const getToken = () => {
-  return Cookies?.get(AUTH_TOKEN) ? Cookies?.get(AUTH_TOKEN) : ''
+  return Cookies.get(AUTH_TOKEN) ? Cookies.get(AUTH_TOKEN) : ''
 }
 
 // GLOBAL DEFAULT
@@ -19,7 +19,7 @@ export const getToken = () => {
 
 // get fuction handler un-authenticate request
 export function getAxios(url, params, configs = {}) {
-  axios.defaults.headers.common['AUTHORIZATION'] = `Bearer ${getToken()}`
+  axios.defaults.headers.common['AUTHORIZATION'] = `Bearer ${getToken() ? getToken() : ''}`
 
   return new Promise((resolve, reject) => {
     axios
@@ -55,12 +55,12 @@ export function getAxios(url, params, configs = {}) {
  * @param isAuth
  */
 export function postAxios(url, body, config = {}, isAuth = true) {
-  axios.defaults.headers.common['AUTHORIZATION'] = `Bearer ${getToken()}`
-
+  axios.defaults.headers.common['AUTHORIZATION'] = `Bearer ${getToken() ? getToken() : ''}`
   if (!isAuth) {
     axios.defaults.headers.common['AUTHORIZATION'] = null
     axios.defaults.headers.common['CLIENTAPIKEY'] = null
   }
+
   return new Promise((resolve, reject) => {
     axios
       .post(url, body, config)

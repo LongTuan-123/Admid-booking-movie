@@ -29,7 +29,7 @@ const ShowTimeCreate = () => {
     const getMovieSelect = async () => {
       await getAxios(API_ROOM_SELECT)
         .then((res) => {
-          setRoomSelect(res?.data?.data)
+          setRoomSelect(res?.data)
         })
         .catch((err) => {
           console.log(err)
@@ -66,7 +66,7 @@ const ShowTimeCreate = () => {
     const getMovieSelect = async () => {
       await getAxios(API_MOVIE_SELECT)
         .then((res) => {
-          setMovieSelect(res?.data?.data)
+          setMovieSelect(res?.data)
         })
         .catch((err) => {
           console.log(err)

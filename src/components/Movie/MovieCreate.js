@@ -4,12 +4,13 @@ import { API_MOVIE_STORE } from '../../config/endpointapi'
 import moment from 'moment'
 import { useHistory } from 'react-router-dom'
 import { MOVIE } from '../../config/path'
-import { postAxios } from '../../Http'
+import { getToken, postAxios } from '../../Http'
 
 const { Option } = Select
 
 const MovieCreate = () => {
   const history = useHistory()
+  console.log(getToken())
 
   // const onChange = (e) => {
   //   console.log(e.target.value);

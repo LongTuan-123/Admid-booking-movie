@@ -1,2 +1,2 @@
 export const AUTH_TOKEN = 'token'
-export const USER_INFO = 'info'
+export const USER_INFO = 'data'

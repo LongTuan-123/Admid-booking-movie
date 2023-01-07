@@ -68,7 +68,7 @@ const Seat = () => {
   ]
   return (
     <PrivateLayout>
-      <h2 style={{ fontSize: '32px', textTransform: 'uppercase' }}>Danh sách phim</h2>
+      <h2 style={{ fontSize: '32px', textTransform: 'uppercase' }}>Danh sách ghế</h2>
       <Row>
         <Col span={22}>
           <div className="movies-search">
